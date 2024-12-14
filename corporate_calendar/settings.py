@@ -33,7 +33,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 DEBUG = True
 
 ALLOWED_HOSTS = ['8000-sarahcemm-dullcal-l2e3r7hnco8.ws.codeinstitute-ide.net', 'testingtesting-695b739d3ea3.herokuapp.com']
-
+CSRF_TRUSTED_ORIGINS = ['https://*.codeinstitute-ide.net', 'https://*.herokuapp.com']
 
 # Application definition
 
@@ -63,19 +63,22 @@ ROOT_URLCONF = 'corporate_calendar.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / "templates"],
-        'APP_DIRS': True,
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],  # Add the global templates directory
+        'APP_DIRS': True,  # Enables app-level templates searching
         'OPTIONS': {
-            'context_processors': [
+            'context_processors': [  # Add these processors
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+                'django.contrib.auth.context_processors.auth',  # Required for authentication
+                'django.contrib.messages.context_processors.messages',  # Required for messages
+                'django.template.context_processors.csrf',
+                'django.template.context_processors.tz',
+                'django.template.context_processors.static',
+                'django.template.context_processors.media',
             ],
         },
     },
 ]
-
 WSGI_APPLICATION = 'corporate_calendar.wsgi.application'
 
 
