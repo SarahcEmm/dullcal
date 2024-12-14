@@ -1,59 +1,146 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Corporate Calendar - Event Form</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        table, th, td {
-            border: 1px solid #ccc;
-        }
-        th, td {
-            padding: 10px;
-            text-align: left;
-        }
-        a {
-            color: #007bff;
-            text-decoration: none;
-        }
-        a:hover {
-            text-decoration: underline;
-        }
-    </style>
-</head>
-<body>
-    <h1>Corporate Calendar</h1>
-    <a href="{% url 'event_create' %}">Create New Event</a>
-    <table>
-        <tr>
-            <th>Title</th>
-            <th>Description</th>
-            <th>Date</th>
-            <th>Time</th>
-            <th>Actions</th>
-        </tr>
-        {% for event in events %}
-        <tr>
-            <td>{{ event.title }}</td>
-            <td>{{ event.description }}</td>
-            <td>{{ event.date }}</td>
-            <td>{{ event.time }}</td>
-            <td>
-                <a href="{% url 'event_update' event.id %}">Edit</a> |
-                <a href="{% url 'event_delete' event.id %}">Delete</a>
-            </td>
-        </tr>
-        {% empty %}
-        <tr>
-            <td colspan="5">No events found.</td>
-        </tr>
-        {% endfor %}
-    </table>
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block title %}Event Calendar{% endblock title %}
+
+{% block content %}
+  <h1>Event Calendar</h1>
+
+  <!-- Calendar Grid -->
+  <div class="calendar-grid">
+    <!-- Month and Year Display -->
+    <div class="month-year-display">
+      <h2>{{ current_month }} {{ current_year }}</h2>
+    </div>
+
+    <!-- Weekdays Header -->
+    <div class="weekdays-header">
+      <div>Sun</div>
+      <div>Mon</div>
+      <div>Tue</div>
+      <div>Wed</div>
+      <div>Thu</div>
+      <div>Fri</div>
+      <div>Sat</div>
+    </div>
+
+    <!-- Calendar Days -->
+    <div class="calendar-days">
+      {% for week in calendar %}
+        <div class="week">
+          {% for day in week %}
+            <div class="day {{ day.css_class }}">
+              <span class="day-number">{{ day.day }}</span>
+              <!-- Display Events for the Day -->
+              {% if day.events %}
+                <ul class="day-events">
+                  {% for event in day.events %}
+                    <li>
+                      <a href="{% url 'event_update' event.pk %}">
+                        {{ event.title }} ({{ event.time }})
+                      </a>
+                    </li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+      {% endfor %}
+    </div>
+
+    <!-- Navigation Buttons -->
+    <div class="navigation-buttons">
+      <a href="{% url 'event_list' previous_month previous_year %}">&laquo; Previous Month</a>
+      <a href="{% url 'event_list' next_month next_year %}">Next Month &raquo;</a>
+    </div>
+  </div>
+
+  <!-- Create New Event Button -->
+  <a href="{% url 'event_create' %}" class="btn btn-primary">Create New Event</a>
+
+{% endblock content %}
+
+{% block css %}
+  <style>
+    .calendar-grid {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .month-year-display {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .weekdays-header {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 10px;
+    }
+
+    .weekdays-header div {
+      width: 14.28%; /* 100% / 7 days */
+      text-align: center;
+    }
+
+    .calendar-days {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .week {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 10px;
+    }
+
+    .day {
+      width: 14.28%; /* 100% / 7 days */
+      text-align: center;
+      padding: 10px;
+      border: 1px solid #ddd;
+    }
+
+    .day-number {
+      font-weight: bold;
+    }
+
+    .day-events {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .day-events li {
+      margin-bottom: 5px;
+    }
+
+    .day-events a {
+      text-decoration: none;
+      color: #337ab7;
+    }
+
+    .day-events a:hover {
+      color: #23527c;
+    }
+
+    .navigation-buttons {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .navigation-buttons a {
+      margin: 0 10px;
+      text-decoration: none;
+      color: #337ab7;
+    }
+
+    .navigation-buttons a:hover {
+      color: #23527c;
+    }
+  </style>
+{% endblock css %}
